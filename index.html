@@ -38,11 +38,11 @@
             content: attr(winner);
         }
 
-        .X {
+        .square[mark='X'] {
             background-color: blueviolet;
         }
-
-        .O {
+        
+        .square[mark='O'] {
             background-color: orange;
         }
     </style>
@@ -58,6 +58,7 @@
     <script defer>
         let currentPlayer = 'X';
         let winner = '';
+        let moves = [];
 
         function displayTag(id) {
             const playerEl = document.getElementById('player-display');
@@ -102,23 +103,43 @@
             displayTag('player-display');
         }
 
-        function getWinner(squares) {
-            // TODO
+        function isWinner(squares, player, [x,y]) {
+            // Solution: https://stackoverflow.com/questions/1056316/algorithm-for-determining-tic-tac-toe-game-over/1058804#1058804
+            const marks = squares.map(square => square.getAttribute('mark'));
+            const grid = [marks.slice(0,3), marks.slice(3,6), marks.slice(6,9)];
+            const n = 3;
+            let col = row = diag = rdiag = 0;
+            for (let i = 0; i < n; i++) {
+                if (grid[x][i] === player) {
+                    col++;
+                }
+                if (grid[i][y] === player) {
+                    row++;
+                }
+                if (grid[i][i] === player) {
+                    diag++;
+                }
+                if (grid[i][n-(i+1)] === player) {
+                    rdiag++;
+                }
+            }
+            return col===n || row===n || diag===n || rdiag===n;
         }
 
-        function createSquare() {
+        function createSquare(key) {
             const square = document.createElement('DIV');
-            square.innerHTML = '';
             square.setAttribute('class', 'square');
+            square.setAttribute('key', `${key}`);
             return square;
         }
 
         function subscribe(square) {
             function listener() {
-                square.setAttribute('class', `square ${currentPlayer}`);
-                square.setAttribute('played', '');
+                square.setAttribute('mark', currentPlayer);
                 square.innerHTML = currentPlayer;
                 setPlayer(currentPlayer === 'X' ? 'O' : 'X');
+                const key = Number(square.getAttribute('key')) - 1;
+                moves.push([Math.floor(key / 3), key % 3]);
             }
 
             square.addEventListener('click', listener, { once: true });
@@ -139,7 +160,7 @@
 
             for (let i = 0; i < 9; i++) {
                 const square = board.children.item(i);
-                const newSquare = createSquare();
+                const newSquare = createSquare(i+1);
                 const subscription = subscribe(newSquare);
                 subscriptions.push(subscription);
                 if (square) {
@@ -151,18 +172,20 @@
 
             board.addEventListener('click', function listener() {
                 const squares = Array.from(board.children);
-                const winner = getWinner(squares);
-                const boardIsFull = squares.every(square => square.hasAttribute('played'));
+                const candidate = currentPlayer === 'X' ? 'O' : 'X';
+                const prevMove = moves[moves.length-1];
+                const won = isWinner(squares, candidate, prevMove);
+                const boardIsFull = squares.every(square => square.hasAttribute('mark'));
 
                 function unsubscribeAll() {
                     subscriptions.forEach(subscription => subscription.unsubscribe());
                     subscriptions = [];
                 }
 
-                if (winner) {
+                if (won) {
                     board.removeEventListener('click', listener);
                     unsubscribeAll();
-                    setWinner(winner);
+                    setWinner(candidate);
                 } else if (boardIsFull) {
                     board.removeEventListener('click', listener);
                     unsubscribeAll();
