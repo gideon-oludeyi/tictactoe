@@ -33,11 +33,24 @@
         #player-display::after {
             content: attr(player);
         }
+        
+        #winner-display::after {
+            content: attr(winner);
+        }
+
+        .X {
+            background-color: blueviolet;
+        }
+
+        .O {
+            background-color: orange;
+        }
     </style>
 </head>
 <body>
     <h1>Tictactoe</h1>
     <h3 id="player-display" player="X">Current Player: </h3>
+    <h3 id="winner-display" winner="" hidden>Winner: </h3>
     <div id="board">
         <div class="square"></div>
         <div class="square"></div>
@@ -49,5 +62,25 @@
         <div class="square"></div>
         <div class="square"></div>
     </div>
+
+    <script defer>
+        let currentPlayer = 'X';
+        const squares = Array.from(document.getElementsByClassName('square'));
+
+        function setPlayer(mark) {
+            currentPlayer = mark;
+            const tag = document.getElementById('player-display');
+            tag.setAttribute('player', mark);
+        }
+        
+        squares.forEach(square => {
+            square.addEventListener('click', function listener() {
+                square.removeEventListener('click', listener);
+                square.setAttribute('class', `square ${currentPlayer}`);
+                square.innerHTML = currentPlayer;
+                setPlayer(currentPlayer === 'X' ? 'O' : 'X');
+            })
+        })
+    </script>
 </body>
 </html>
