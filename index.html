@@ -103,9 +103,8 @@
             displayTag('player-display');
         }
 
-        function isWinner(squares, player, [x,y]) {
+        function isWinner(marks, player, [x,y]) {
             // Solution: https://stackoverflow.com/questions/1056316/algorithm-for-determining-tic-tac-toe-game-over/1058804#1058804
-            const marks = squares.map(square => square.getAttribute('mark'));
             const grid = [marks.slice(0,3), marks.slice(3,6), marks.slice(6,9)];
             const n = 3;
             let col = row = diag = rdiag = 0;
@@ -172,10 +171,13 @@
 
             board.addEventListener('click', function listener() {
                 const squares = Array.from(board.children);
+                const marks = squares.map(square => square.getAttribute('mark'));
+                
                 const candidate = currentPlayer === 'X' ? 'O' : 'X';
                 const prevMove = moves[moves.length-1];
-                const won = isWinner(squares, candidate, prevMove);
-                const boardIsFull = squares.every(square => square.hasAttribute('mark'));
+                const won = isWinner(marks, candidate, prevMove);
+
+                const boardIsFull = marks.every(mark => !!mark);
 
                 function unsubscribeAll() {
                     subscriptions.forEach(subscription => subscription.unsubscribe());
