@@ -155,13 +155,22 @@
 
             const board = document.getElementById('board');
 
-            let subscriptions = [];
+            const subscriptions = {
+                subs: [],
+                add(subscription) {
+                    this.subs.push(subscription);
+                },
+                unsubscribeAll() {
+                    this.subs.forEach(subscription => subscription.unsubscribe());
+                    this.subs = [];
+                }
+            };
 
             for (let i = 0; i < 9; i++) {
                 const square = board.children.item(i);
                 const newSquare = createSquare(i+1);
                 const subscription = subscribe(newSquare);
-                subscriptions.push(subscription);
+                subscriptions.add(subscription);
                 if (square) {
                     board.replaceChild(newSquare, square);
                 } else {
@@ -179,18 +188,13 @@
 
                 const boardIsFull = marks.every(mark => !!mark);
 
-                function unsubscribeAll() {
-                    subscriptions.forEach(subscription => subscription.unsubscribe());
-                    subscriptions = [];
-                }
-
                 if (won) {
                     board.removeEventListener('click', listener);
-                    unsubscribeAll();
+                    subscriptions.unsubscribeAll();
                     setWinner(candidate);
                 } else if (boardIsFull) {
                     board.removeEventListener('click', listener);
-                    unsubscribeAll();
+                    subscriptions.unsubscribeAll();
                     displayTag('no-winner-display');
                 }
             })
