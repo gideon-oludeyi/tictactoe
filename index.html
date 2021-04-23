@@ -49,38 +49,129 @@
 </head>
 <body>
     <h1>Tictactoe</h1>
+    <button id="new-game" onclick="newGame()">New Game</button>
     <h3 id="player-display" player="X">Current Player: </h3>
     <h3 id="winner-display" winner="" hidden>Winner: </h3>
-    <div id="board">
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-        <div class="square"></div>
-    </div>
+    <h3 id="no-winner-display" hidden>Draw</h3>
+    <div id="board"></div>
 
     <script defer>
         let currentPlayer = 'X';
-        const squares = Array.from(document.getElementsByClassName('square'));
+        let winner = '';
+
+        function displayTag(id) {
+            const playerEl = document.getElementById('player-display');
+            const winnerEl = document.getElementById('winner-display');
+            const drawEl = document.getElementById('no-winner-display');
+            switch (id) {
+                case 'player-display':
+                    playerEl.removeAttribute('hidden');
+                    winnerEl.setAttribute('hidden', '');
+                    drawEl.setAttribute('hidden', '');
+                    break;
+                case 'winner-display':
+                    winnerEl.removeAttribute('hidden');
+                    playerEl.setAttribute('hidden', '');
+                    drawEl.setAttribute('hidden', '');
+                    break;
+                case 'no-winner-display':
+                    drawEl.removeAttribute('hidden');
+                    winnerEl.setAttribute('hidden', '');
+                    playerEl.setAttribute('hidden', '');
+                    break;
+            }
+        }
+
+        function resetWinner() {
+            winner = '';
+            const tag = document.getElementById('winner-display');
+            tag.setAttribute('winner', '');
+        }
+
+        function setWinner(mark) {
+            winner = mark;
+            const tag = document.getElementById('winner-display');
+            tag.setAttribute('winner', mark);
+            displayTag('winner-display');
+        }
 
         function setPlayer(mark) {
             currentPlayer = mark;
             const tag = document.getElementById('player-display');
             tag.setAttribute('player', mark);
+            displayTag('player-display');
         }
-        
-        squares.forEach(square => {
-            square.addEventListener('click', function listener() {
-                square.removeEventListener('click', listener);
+
+        function getWinner(squares) {
+            // TODO
+        }
+
+        function createSquare() {
+            const square = document.createElement('DIV');
+            square.innerHTML = '';
+            square.setAttribute('class', 'square');
+            return square;
+        }
+
+        function subscribe(square) {
+            function listener() {
                 square.setAttribute('class', `square ${currentPlayer}`);
+                square.setAttribute('played', '');
                 square.innerHTML = currentPlayer;
                 setPlayer(currentPlayer === 'X' ? 'O' : 'X');
+            }
+
+            square.addEventListener('click', listener, { once: true });
+            return {
+                unsubscribe() {
+                    square.removeEventListener('click', listener);
+                },
+            };
+        }
+
+        function newGame() {
+            setPlayer('X');
+            resetWinner('');
+
+            const board = document.getElementById('board');
+
+            let subscriptions = [];
+
+            for (let i = 0; i < 9; i++) {
+                const square = board.children.item(i);
+                const newSquare = createSquare();
+                const subscription = subscribe(newSquare);
+                subscriptions.push(subscription);
+                if (square) {
+                    board.replaceChild(newSquare, square);
+                } else {
+                    board.appendChild(newSquare);
+                }
+            }
+
+            board.addEventListener('click', function listener() {
+                const squares = Array.from(board.children);
+                const winner = getWinner(squares);
+                const boardIsFull = squares.every(square => square.hasAttribute('played'));
+
+                function unsubscribeAll() {
+                    subscriptions.forEach(subscription => subscription.unsubscribe());
+                    subscriptions = [];
+                }
+
+                if (winner) {
+                    board.removeEventListener('click', listener);
+                    unsubscribeAll();
+                    setWinner(winner);
+                } else if (boardIsFull) {
+                    board.removeEventListener('click', listener);
+                    unsubscribeAll();
+                    displayTag('no-winner-display');
+                }
             })
-        })
+        }
+
+        newGame(); // automatically start the game
     </script>
 </body>
 </html>
