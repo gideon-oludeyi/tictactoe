@@ -47,7 +47,6 @@
 
     <script defer>
         let currentPlayer = 'X';
-        let winner = '';
         let moves = [];
 
         function display(text) {
@@ -55,12 +54,7 @@
             displayEl.innerHTML = text;
         }
 
-        function resetWinner() {
-            winner = '';
-        }
-
         function setWinner(mark) {
-            winner = mark;
             display(`Winner: ${mark}`);
         }
 
@@ -117,7 +111,6 @@
 
         function newGame() {
             setPlayer('X');
-            resetWinner();
 
             const board = document.getElementById('board');
 
