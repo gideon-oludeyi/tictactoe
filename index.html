@@ -50,45 +50,23 @@
         let winner = '';
         let moves = [];
 
-        function display(action) {
+        function display(text) {
             const displayEl = document.getElementById('display');
-            switch (action) {
-                case 'player-display':
-                    displayEl.removeAttribute('hidden');
-                    displayEl.innerHTML = `Current Player: ${currentPlayer}`;
-                    break;
-                case 'winner-display':
-                    displayEl.removeAttribute('hidden');
-                    displayEl.innerHTML = `Winner: ${winner}`;
-                    break;
-                case 'no-winner-display':
-                    displayEl.removeAttribute('hidden');
-                    displayEl.innerHTML = 'Draw';
-                    break;
-                default:
-                    displayEl.setAttribute('hidden', '');
-                    break;
-            }
+            displayEl.innerHTML = text;
         }
 
         function resetWinner() {
             winner = '';
-            const tag = document.getElementById('winner-display');
-            tag.setAttribute('winner', '');
         }
 
         function setWinner(mark) {
             winner = mark;
-            const tag = document.getElementById('winner-display');
-            tag.setAttribute('winner', mark);
-            display('winner-display');
+            display(`Winner: ${mark}`);
         }
 
         function setPlayer(mark) {
             currentPlayer = mark;
-            const tag = document.getElementById('player-display');
-            tag.setAttribute('player', mark);
-            display('player-display');
+            display(`Current Player: ${mark}`);
         }
 
         function isWinner(marks, player, [x,y]) {
@@ -183,7 +161,7 @@
                 } else if (boardIsFull) {
                     board.removeEventListener('click', listener);
                     subscriptions.unsubscribeAll();
-                    display('no-winner-display');
+                    display('Draw');
                 }
             })
         }
