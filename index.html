@@ -30,14 +30,6 @@
             border: 1px solid black;
         }
 
-        #player-display::after {
-            content: attr(player);
-        }
-        
-        #winner-display::after {
-            content: attr(winner);
-        }
-
         .square[mark='X'] {
             background-color: blueviolet;
         }
@@ -50,9 +42,7 @@
 <body>
     <h1>Tictactoe</h1>
     <button id="new-game" onclick="newGame()">New Game</button>
-    <h3 id="player-display" player="X">Current Player: </h3>
-    <h3 id="winner-display" winner="" hidden>Winner: </h3>
-    <h3 id="no-winner-display" hidden>Draw</h3>
+    <h3 id='display'></h3>
     <div id="board"></div>
 
     <script defer>
@@ -60,25 +50,23 @@
         let winner = '';
         let moves = [];
 
-        function displayTag(id) {
-            const playerEl = document.getElementById('player-display');
-            const winnerEl = document.getElementById('winner-display');
-            const drawEl = document.getElementById('no-winner-display');
-            switch (id) {
+        function display(action) {
+            const displayEl = document.getElementById('display');
+            switch (action) {
                 case 'player-display':
-                    playerEl.removeAttribute('hidden');
-                    winnerEl.setAttribute('hidden', '');
-                    drawEl.setAttribute('hidden', '');
+                    displayEl.removeAttribute('hidden');
+                    displayEl.innerHTML = `Current Player: ${currentPlayer}`;
                     break;
                 case 'winner-display':
-                    winnerEl.removeAttribute('hidden');
-                    playerEl.setAttribute('hidden', '');
-                    drawEl.setAttribute('hidden', '');
+                    displayEl.removeAttribute('hidden');
+                    displayEl.innerHTML = `Winner: ${winner}`;
                     break;
                 case 'no-winner-display':
-                    drawEl.removeAttribute('hidden');
-                    winnerEl.setAttribute('hidden', '');
-                    playerEl.setAttribute('hidden', '');
+                    displayEl.removeAttribute('hidden');
+                    displayEl.innerHTML = 'Draw';
+                    break;
+                default:
+                    displayEl.setAttribute('hidden', '');
                     break;
             }
         }
@@ -93,14 +81,14 @@
             winner = mark;
             const tag = document.getElementById('winner-display');
             tag.setAttribute('winner', mark);
-            displayTag('winner-display');
+            display('winner-display');
         }
 
         function setPlayer(mark) {
             currentPlayer = mark;
             const tag = document.getElementById('player-display');
             tag.setAttribute('player', mark);
-            displayTag('player-display');
+            display('player-display');
         }
 
         function isWinner(marks, player, [x,y]) {
@@ -151,7 +139,7 @@
 
         function newGame() {
             setPlayer('X');
-            resetWinner('');
+            resetWinner();
 
             const board = document.getElementById('board');
 
@@ -195,7 +183,7 @@
                 } else if (boardIsFull) {
                     board.removeEventListener('click', listener);
                     subscriptions.unsubscribeAll();
-                    displayTag('no-winner-display');
+                    display('no-winner-display');
                 }
             })
         }
