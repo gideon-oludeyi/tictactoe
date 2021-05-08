@@ -1,7 +1,7 @@
-import './App.css';
+import Board from './Board';
 import Button from './Button';
-import { useGame } from './useGame';
 import Square from './Square';
+import { useGame } from './useGame';
 
 function App() {
     const { squares, turn, winner, isDraw, setSquare, reset } = useGame();
@@ -13,7 +13,7 @@ function App() {
 
             <Button onClick={reset}>New Game</Button>
 
-            <ul className="board">
+            <Board>
                 {squares.map((value, index) => (
                     <Square
                         key={`${index + 1}`}
@@ -21,7 +21,7 @@ function App() {
                         onClick={() => setSquare(index)}
                     />
                 ))}
-            </ul>
+            </Board>
         </div>
     );
 }

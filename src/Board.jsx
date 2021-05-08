@@ -1,4 +1,6 @@
-.board {
+import styled from 'styled-components';
+
+const Board = styled.ul`
     display: grid;
     width: 16em;
     height: 16em;
@@ -7,4 +9,6 @@
     justify-items: center;
     align-items: center;
     border: 1px solid black;
-}
+`;
+
+export default Board;
