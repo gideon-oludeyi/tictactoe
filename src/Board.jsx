@@ -8,7 +8,6 @@ const Board = styled.ul`
     grid-template-rows: repeat(3, 1fr);
     justify-items: center;
     align-items: center;
-    border: 1px solid black;
 `;
 
 export default Board;

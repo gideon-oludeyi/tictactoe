@@ -1,12 +1,13 @@
 import Board from './Board';
 import Button from './Button';
 import Square from './Square';
+import { ThemeProvider } from './ThemeContext';
 import { useGame } from './useGame';
 
 function App() {
     const { squares, turn, winner, isDraw, setSquare, reset } = useGame();
     return (
-        <div>
+        <ThemeProvider>
             {!(winner || isDraw) && <h1>Player Turn: {turn}</h1>}
             {winner && <h1>Winner: {winner}</h1>}
             {isDraw && <h2>Draw</h2>}
@@ -17,12 +18,13 @@ function App() {
                 {squares.map((value, index) => (
                     <Square
                         key={`${index + 1}`}
-                        value={value}
                         onClick={() => setSquare(index)}
-                    />
+                    >
+                        {value}
+                    </Square>
                 ))}
             </Board>
-        </div>
+        </ThemeProvider>
     );
 }
 
