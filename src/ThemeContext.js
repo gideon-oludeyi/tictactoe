@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import { ThemeContext } from 'styled-components';
 
 const theme = {
-    primaryColor: 'blueviolet',
-    secondaryColor: 'orange',
+    primaryColor: '#9729ED',
+    secondaryColor: '#ED4D29',
     defaultColor: 'white',
 };
 
