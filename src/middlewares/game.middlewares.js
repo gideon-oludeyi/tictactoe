@@ -1,11 +1,11 @@
 import {
     SELECT_GAME_POSITION,
     TOGGLE_CURRENT_PLAYER,
+    SET_GAME_MOVE,
     setCurrentPlayer,
     setGameMove,
     toggleCurrentPlayer,
     invalidMoveAttempted,
-    SET_GAME_MOVE,
     setGameWinner,
     gameDraw,
 } from '../actions/game.actions';
@@ -17,6 +17,10 @@ const onSelectGamePosition = store => next => action => {
 
     if (action.type === SELECT_GAME_POSITION) {
         const { game } = store.getState();
+        if (game.winner) {
+            return;
+        }
+
         const { row, column } = action.payload;
         const free = game.moves.every(
             ({ position }) => position.row !== row || position.column !== column

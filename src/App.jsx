@@ -5,6 +5,9 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import UndoIcon from '@mui/icons-material/Undo';
+
+import Appbar from './Appbar';
 
 import Square from './Square';
 import Board from './Board';
@@ -24,29 +27,50 @@ export default function App() {
     );
 
     return (
-        <Container maxWidth="sm">
-            <Stack
-                justifyContent="center"
-                alignItems="center"
-                sx={{ height: '100vh' }}
-            >
-                <Typography variant="h3" component="h1">
-                    Tictactoe
-                </Typography>
-                <Typography variant="h5" component="h3">
-                    {winner ? `Player ${winner} Won` : currentPlayer}
-                </Typography>
-                <Board>
-                    {flattenedMoves.map((move, index) => (
-                        <Square
-                            key={index}
-                            value={move?.player}
-                            onClick={() => dispatch(selectGamePosition(index))}
-                        />
-                    ))}
-                </Board>
-                <Button onClick={() => dispatch(resetGame())}>New Game</Button>
-            </Stack>
-        </Container>
+        <div>
+            <Appbar />
+            <Container maxWidth="sm">
+                <Stack
+                    justifyContent="center"
+                    alignItems="center"
+                    sx={{ height: '90vh' }}
+                    spacing={2}
+                >
+                    <Typography variant="h5" component="h3">
+                        {winner ? `Player ${winner} Won` : currentPlayer}
+                    </Typography>
+                    <Board>
+                        {flattenedMoves.map((move, index) => (
+                            <Square
+                                key={index}
+                                value={move?.player}
+                                onClick={() =>
+                                    dispatch(selectGamePosition(index))
+                                }
+                            />
+                        ))}
+                    </Board>
+                    <Stack
+                        flexDirection="row"
+                        justifyContent="space-evenly"
+                        width="100%"
+                    >
+                        <Button
+                            startIcon={<UndoIcon />}
+                            onClick={() => alert('Not Yet Implemented')}
+                        >
+                            Undo
+                        </Button>
+                        <Button
+                            variant="contained"
+                            disableElevation
+                            onClick={() => dispatch(resetGame())}
+                        >
+                            New Game
+                        </Button>
+                    </Stack>
+                </Stack>
+            </Container>
+        </div>
     );
 }
